@@ -78,13 +78,16 @@ for (let i = 1; i <= 20; i++) {
 }
 
 const priceSign = "$";
+const CollectionName = "shoppingCart";
 
 function priceToNumber(price) {
     return parseFloat(price.replace(priceSign, ""));
 }
 
+
+
 export {
-    noPriceString, priceSign, numberList,
+    noPriceString, priceSign, numberList, CollectionName,
     priceToNumber, getShirtName, getPrice, getDescription, getAllColors,
     getFirstAvailableColorAndNum, getFirstShirtImages, setSelectedImage
 };

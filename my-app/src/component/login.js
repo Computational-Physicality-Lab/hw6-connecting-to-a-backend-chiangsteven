@@ -16,15 +16,20 @@ function Login({ user, setIsLogin, setUser }) {
         const providerGoogle = new firebase.auth.GoogleAuthProvider();
         providerGoogle.addScope('profile');
         providerGoogle.addScope('email');
-        firebase.auth().signInWithPopup(providerGoogle).then(function (result) {
-            // 可以獲得 Google 提供 token，token可透過 Google API 獲得其他數據。  
-            const token = result.credential.accessToken;
-            const user = result.user;
-            console.log(token);
-            console.log(user);
-            setIsLogin(true);
-            setUser(user);
-        });
+        firebase.auth().signInWithPopup(providerGoogle)
+            .then(function (result) {
+                // 可以獲得 Google 提供 token，token可透過 Google API 獲得其他數據。  
+                const token = result.credential.accessToken;
+                const user = result.user;
+                console.log(token);
+                console.log(user);
+                setIsLogin(true);
+                setUser(user);
+            })
+            .catch(function (error) {
+                console.log("login failed");
+                console.log(error);
+            })
     }
     return (
         <>

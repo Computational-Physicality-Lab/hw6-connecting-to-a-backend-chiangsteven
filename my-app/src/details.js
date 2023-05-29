@@ -7,7 +7,7 @@ import {
 } from './shared/utils';
 import { useState } from 'react';
 
-export default function Details({ addCart }) {
+export default function Details({ addCart, user }) {
     let { productID } = useParams();
     let [side_detail, setSideDetail] = useState("front");
     const { firstColor } = getFirstAvailableColorAndNum(productID);
@@ -71,7 +71,7 @@ export default function Details({ addCart }) {
                             onChange={(e) => { setQty(e.target.value); }}>
                             {
                                 numberList.map(quantity =>
-                                    <option key={quantity} value={quantity} >
+                                    <option key={quantity} value={quantity.toString()} >
                                         {quantity}
                                     </option>
                                 )
@@ -81,7 +81,7 @@ export default function Details({ addCart }) {
                     <Link to='/shoppingcart'>
                         <button key="add-to-cart" type="button"
                             className="add-cart-btn"
-                            disabled={noStock || size === "" ? true : false}
+                            disabled={!user || noStock || size === "" ? true : false}
                             onClick={() => { addCart(productID, size, qty, color_detail); }} >
                             Add to Cart
                         </button>

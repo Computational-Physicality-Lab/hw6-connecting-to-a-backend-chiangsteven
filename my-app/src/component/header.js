@@ -4,14 +4,14 @@ import { Link } from "react-router-dom";
 
 const headerNotImpText = ["CREATE FROM PICTURE", "CREATE YOUR OWN", "ABOUT US"];//, "LOG IN"
 
-export default function Heander({ itemNum, user }) {
+export default function Heander({ itemNum, user, refresh }) {
     return (
         <>
             <header>
                 <div className="head-container">
                     <Link className="logo" to="/"><img src={logo} alt="logo.png" /></Link>
                     <h1 className="name">Scotty Shirts U Illustrate (SSUI)</h1>
-                    <Link className="shopping-cart" to="/shoppingcart">
+                    <Link className="shopping-cart" onClick={refresh} to="/shoppingcart">
                         <img src={cart} alt="shopping-cart" />
                         <p>{itemNum}</p>
                     </Link>
