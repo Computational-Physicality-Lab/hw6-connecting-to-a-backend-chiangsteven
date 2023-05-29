@@ -1,10 +1,10 @@
 import { useState, useEffect } from "react";
 import { Link, Navigate } from "react-router-dom";
-import SizeOptions from './component/sizeOptions'
+import SizeOptions from './sizeOptions'
 import {
     getShirtName, getPrice, priceToNumber, getAllColors,
     setSelectedImage, numberList, priceSign
-} from './shared/utils';
+} from '../shared/utils';
 
 export default function CartShirtItem({ shirt, idx, removeCartItem, changeQty, editCartItem }) {
     //let [qty, setQty] = useState(shirt.quantity);

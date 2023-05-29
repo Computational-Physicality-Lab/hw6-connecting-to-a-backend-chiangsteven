@@ -2,8 +2,8 @@ import { Link, Navigate } from "react-router-dom";
 import {
     getShirtName, getPrice, priceToNumber, getAllColors,
     setSelectedImage, numberList, priceSign
-} from './shared/utils';
-import CartShirtItem from "./cartShirtItem"
+} from '../shared/utils';
+import CartShirtItem from "../component/cartShirtItem"
 import { useEffect } from "react";
 
 function calculateMyCart(myCart) {
@@ -69,7 +69,7 @@ export default function Cart({ user, num, myCart, removeCartItem, changeQty, edi
                             </div>
                         </div>
                         <div className="cart-checkout-btn-container">
-                            <Link to="/not_implemented" className="cart-checkout-btn">Sing in and Checkout</Link>
+                            <Link to="/not_implemented" className="cart-checkout-btn">Checkout</Link>
                         </div>
                     </div>
                     <div className="cart-checkout-btn-container continue-div">

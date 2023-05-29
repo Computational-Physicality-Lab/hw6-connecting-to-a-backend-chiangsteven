@@ -2,7 +2,7 @@ import logo from '../assets/images/logo.png';
 import cart from '../assets/images/cart.png';
 import { Link } from "react-router-dom";
 
-const headerNotImpText = ["CREATE FROM PICTURE", "CREATE YOUR OWN", "ABOUT US"];//, "LOG IN"
+const headerNotImpText = ["CREATE YOUR OWN", "ABOUT US"];//"CREATE FROM PICTURE", "LOG IN"
 
 export default function Heander({ itemNum, user, refresh }) {
     return (
@@ -18,6 +18,7 @@ export default function Heander({ itemNum, user, refresh }) {
                 </div>
                 <div className="head-link">
                     <Link to="/products">T-SHIRTS</Link>
+                    <Link to="/from_pictures">CREATE FROM PICTURE</Link>
                     {headerNotImpText.map((text, id) =>
                         (<Link key={id} to="/not_implemented">{text}</Link>))}
                     {!user && <Link to="/login">LOG IN</Link>}

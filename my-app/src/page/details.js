@@ -1,10 +1,10 @@
 import { Link } from "react-router-dom";
 import { useParams } from 'react-router-dom';
-import SizeOptions from './component/sizeOptions'
+import SizeOptions from '../component/sizeOptions'
 import {
     getShirtName, getPrice, noPriceString, numberList, getDescription,
     getFirstAvailableColorAndNum, setSelectedImage, getAllColors
-} from './shared/utils';
+} from '../shared/utils';
 import { useState } from 'react';
 
 export default function Details({ addCart, user }) {
@@ -13,7 +13,7 @@ export default function Details({ addCart, user }) {
     const { firstColor } = getFirstAvailableColorAndNum(productID);
     let [color_detail, setColorDetail] = useState(firstColor);
     let [size, setSize] = useState("");
-    let [qty, setQty] = useState(1);
+    let [qty, setQty] = useState("1");
     let noStock = (getPrice(productID) === noPriceString);
 
     const colors = getAllColors(productID);

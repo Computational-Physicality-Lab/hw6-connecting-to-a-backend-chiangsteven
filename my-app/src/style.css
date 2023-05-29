@@ -10,6 +10,20 @@ p {
     margin-inline-end: 0px !important;
 }
 
+.create-from-pic-container,
+.flex-center {
+    display: flex;
+    justify-content: center;
+}
+
+.search-pic-container {
+    width: 50%;
+}
+
+.search-pic-container div {
+    width: 100%;
+}
+
 .not-imple-p {
     text-align: center;
     opacity: 0.5;
@@ -117,7 +131,7 @@ header {
 
 .head-link a {
     text-decoration: none;
-    color: #c51230;
+    color: #c51230 !important;
 }
 
 .head-link a::after {
@@ -445,11 +459,21 @@ footer>div {
     min-width: 250px;
     align-items: center;
     display: flex;
+    position: relative;
 }
 
 .shirt-pic {
     /* max-width: 250px; */
     width: 100%;
+    position: relative;
+
+}
+
+.on-shirt-pic {
+    max-width: 40%;
+    position: absolute;
+    left: 30%;
+    top: 40%;
 }
 
 #shirts-list {

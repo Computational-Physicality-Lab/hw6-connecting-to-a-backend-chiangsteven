@@ -1,6 +1,6 @@
-import shirts from './shared/shirts';
+import shirts from '../shared/shirts';
 import { Link } from "react-router-dom";
-import { getShirtName, getFirstAvailableColorAndNum, getFirstShirtImages } from './shared/utils';
+import { getShirtName, getFirstAvailableColorAndNum, getFirstShirtImages } from '../shared/utils';
 
 function createShirtItem(idx, name, pic, num) {
     return (

@@ -1,4 +1,4 @@
-import scotty from './assets/images/scotty.png';
+import scotty from '../assets/images/scotty.png';
 
 function notImp() {
     return (

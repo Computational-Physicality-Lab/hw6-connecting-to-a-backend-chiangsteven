@@ -3,11 +3,11 @@ import 'bootstrap/dist/css/bootstrap.css';
 import db from "./index";
 import Footer from './component/footer';
 import Header from './component/header';
-import Products from './products';
-import Details from './details';
-import Cart from './cart';
-import Home from './home';
-import NotImp from './notImp';
+import Products from './page/products';
+import Details from './page/details';
+import Cart from './page/cart';
+import Home from './page/home';
+import NotImp from './page/notImp';
 import _ from "lodash";
 import { CollectionName } from './shared/utils';
 import { useState, useEffect } from 'react';
@@ -16,6 +16,7 @@ import { createApi } from 'unsplash-js';
 import Login from './component/login';
 import Logout from './component/logout';
 import { doc, collection, setDoc, getDoc, updateDoc, arrayUnion, arrayRemove } from "firebase/firestore";
+import FromPictures from './page/pictures';
 
 
 function App() {
@@ -88,7 +89,9 @@ function App() {
     setMyCart(tmpCart);
   };
   async function fetchData(user) {
-
+    if (!user) {
+      return [undefined, undefined];
+    }
     const docRef = doc(db, CollectionName, user.uid);
     const docSnap = await getDoc(docRef);
     if (docSnap.exists()) {
@@ -148,6 +151,7 @@ function App() {
 
         <Route path="/" element={<Home />} />
         <Route path="/products" element={<Products />} />
+        <Route path="/from_pictures" element={<FromPictures user={user} />} />
         <Route path="/details/:productID" element={<Details addCart={addCart} user={user} />} />
         <Route path="/shoppingcart"
           element={<Cart user={user} num={itemNum} myCart={myCart} iniData={iniData}

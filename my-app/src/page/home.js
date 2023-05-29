@@ -1,4 +1,4 @@
-import home from './assets/images/banner.png';
+import home from '../assets/images/banner.png';
 
 function Home() {
     return (
