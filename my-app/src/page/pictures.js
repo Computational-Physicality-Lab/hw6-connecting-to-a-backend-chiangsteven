@@ -46,6 +46,12 @@ export default function FromPictures({ addCart, user, onShirtImg, setOnShirtImg,
         setRealData([...oriData, ...Data.results]);
         setPage(page + 1);
     }
+    const isScotty = (img) => {
+        if (!img.match(/scotty/))
+            return false;
+        else
+            return true;
+    }
     useEffect(() => {
         console.log(realData);
         console.log(realData?.length);
@@ -88,7 +94,7 @@ export default function FromPictures({ addCart, user, onShirtImg, setOnShirtImg,
                         <button key="add-to-cart" type="button"
                             className="add-cart-btn"
                             disabled={size === "" || !onShirtImg ? true : false}
-                            onClick={() => { addCart(-1, size, qty, { title: query, img: onShirtImg }); }} >
+                            onClick={() => { const title = isScotty(onShirtImg) ? "Scotty" : query; addCart(-1, size, qty, { title: title, img: onShirtImg }); }} >
                             Add to Cart
                         </button>
                     </Link>
