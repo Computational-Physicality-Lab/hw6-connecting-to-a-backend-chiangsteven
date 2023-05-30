@@ -87,7 +87,7 @@ export default function FromPictures({ addCart, user, onShirtImg, setOnShirtImg,
                     <Link to='/shoppingcart'>
                         <button key="add-to-cart" type="button"
                             className="add-cart-btn"
-                            disabled={size === "" ? true : false}
+                            disabled={size === "" || !onShirtImg ? true : false}
                             onClick={() => { addCart(-1, size, qty, { title: query, img: onShirtImg }); }} >
                             Add to Cart
                         </button>
