@@ -7,7 +7,7 @@ This is the starter code of [2023-Programming User Interface Homework](https://h
 - deploy 的網站連結：[https://majestic-pika-524b0d.netlify.app/](https://majestic-pika-524b0d.netlify.app/)
 - 所實作的加分作業項目
     - Display More 功能
-        - 當點擊 Display More 後，搜尋結果捲軸會自動跳至最底。
+        - 當點擊 `Display More` 後，搜尋結果顯示區的捲軸會自動跳至最底。
     - 匿名購物車功能
         - 未登入狀態下均可加入購物車，登入後會將匿名購物車的內容加入帳號內購物車
         - 購物車的 `Checkout` 按紐會隨登入狀態改變：未登入時會顯示 `Login and Checkout`，並且連結至登入頁面；登入後則顯示 `Checkout` 並連結至未實作頁面。

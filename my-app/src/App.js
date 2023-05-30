@@ -130,10 +130,9 @@ function App() {
 
   const mergeData = async (myuser) => {
     const [num, content] = await fetchData(myuser);
-    //if(num !== undefined  && num !== 0){
 
     await updateDoc(doc(db, CollectionName, myuser.uid), {
-      num: num + itemNum
+      num: (num ? num : 0) + itemNum
     });
 
     for (let i = 0; i < myCart.length; i++) {
@@ -157,9 +156,7 @@ function App() {
       setMyCart([]);
     }
   }, [user]);
-  useEffect(() => {
-    console.log(myCart);
-  }, [myCart]);
+
   return (
     <HashRouter>
       <Header itemNum={itemNum} user={user} refresh={iniData} />
