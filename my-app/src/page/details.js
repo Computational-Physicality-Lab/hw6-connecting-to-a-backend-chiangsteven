@@ -81,7 +81,7 @@ export default function Details({ addCart, user }) {
                     <Link to='/shoppingcart'>
                         <button key="add-to-cart" type="button"
                             className="add-cart-btn"
-                            disabled={!user || noStock || size === "" ? true : false}
+                            disabled={noStock || size === "" ? true : false}
                             onClick={() => { addCart(productID, size, qty, color_detail); }} >
                             Add to Cart
                         </button>

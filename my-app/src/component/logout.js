@@ -9,10 +9,11 @@ import "firebase/compat/firestore";
 // const auth = firebase.auth.getAuth();
 
 
-function Logout({ user, setUser }) {
+function Logout({ user, setUser, cleanCart }) {
     const logoutClick = () => {
         firebase.auth().signOut().then(() => {
             setUser(null);
+            cleanCart();
         });
     }
     return (

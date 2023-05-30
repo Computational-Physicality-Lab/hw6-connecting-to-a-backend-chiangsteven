@@ -34,12 +34,11 @@ function App() {
         num: parseInt(itemNum) + parseInt(quantity),
         content: arrayUnion({ id: id, size: size, quantity: quantity, color: color, cartId: cartItemUid, timeStamp: ts })
       });
-
-
-      setItemNum(parseInt(itemNum) + parseInt(quantity));
-      setMyCart([{ id: id, size: size, quantity: quantity, color: color, cartId: cartItemUid, timeStamp: ts }, ...JSON.parse(JSON.stringify(myCart))]);
-      setUid(cartItemUid + 1);
     }
+    setItemNum(parseInt(itemNum) + parseInt(quantity));
+    setMyCart([{ id: id, size: size, quantity: quantity, color: color, cartId: cartItemUid, timeStamp: ts }, ...JSON.parse(JSON.stringify(myCart))]);
+    setUid(cartItemUid + 1);
+
   };
 
   const removeCartItem = async (id) => {
@@ -48,21 +47,21 @@ function App() {
         num: parseInt(itemNum) - parseInt(myCart[id].quantity),
         content: arrayRemove(myCart[id])
       });
-      setItemNum(parseInt(itemNum) - parseInt(myCart[id].quantity));
-      let tmpCart = JSON.parse(JSON.stringify(myCart));
-      tmpCart.splice(id, 1);
-      // console.log(tmpCart);
-      // console.log(myCart);
-      setMyCart(tmpCart);
     }
+    setItemNum(parseInt(itemNum) - parseInt(myCart[id].quantity));
+    let tmpCart = JSON.parse(JSON.stringify(myCart));
+    tmpCart.splice(id, 1);
+    // console.log(tmpCart);
+    // console.log(myCart);
+    setMyCart(tmpCart);
+
   };
   const changeCartItemQty = async (id, qty) => {
+    const originQty = myCart[id].quantity;
+    const tmpCart = JSON.parse(JSON.stringify(myCart));
+    tmpCart[id].quantity = qty;
+
     if (user) {
-      const originQty = myCart[id].quantity;
-
-      const tmpCart = JSON.parse(JSON.stringify(myCart));
-      tmpCart[id].quantity = qty;
-
       await updateDoc(doc(db, CollectionName, user.uid), {
         num: parseInt(itemNum) - parseInt(originQty) + parseInt(qty),
         content: arrayRemove(myCart[id])
@@ -70,10 +69,11 @@ function App() {
       await updateDoc(doc(db, CollectionName, user.uid), {
         content: arrayUnion(tmpCart[id])
       });
-
-      setItemNum(parseInt(itemNum) - parseInt(originQty) + parseInt(qty));
-      setMyCart(tmpCart);
     }
+
+    setItemNum(parseInt(itemNum) - parseInt(originQty) + parseInt(qty));
+    setMyCart(tmpCart);
+
   };
   const editCartItem = async (id, field, newValue) => {
     const tmpCart = JSON.parse(JSON.stringify(myCart));
@@ -88,6 +88,12 @@ function App() {
     }
     setMyCart(tmpCart);
   };
+
+  const cleanCart = () => {
+    setItemNum(0);
+    setMyCart([]);
+  }
+
   async function fetchData(user) {
     if (!user) {
       return [undefined, undefined];
@@ -120,9 +126,26 @@ function App() {
       const sortedContent = _.sortBy(content, (c) => { return -c.timeStamp });
       setMyCart(sortedContent);
     }
-    else {
-      setMyCart([]);
+  }
+
+  const mergeData = async (myuser) => {
+    const [num, content] = await fetchData(myuser);
+    //if(num !== undefined  && num !== 0){
+
+    await updateDoc(doc(db, CollectionName, myuser.uid), {
+      num: num + itemNum
+    });
+
+    for (let i = 0; i < myCart.length; i++) {
+      await updateDoc(doc(db, CollectionName, myuser.uid), {
+        content: arrayUnion(myCart[i])
+      });
     }
+
+    const [newNum, newContent] = await fetchData(myuser);
+    setItemNum(newNum);
+    const sortedContent = _.sortBy(newContent, (c) => { return -c.timeStamp });
+    setMyCart(sortedContent);
   }
 
   useEffect(() => {
@@ -152,8 +175,8 @@ function App() {
           element={<Cart user={user} num={itemNum} myCart={myCart} iniData={iniData}
             removeCartItem={removeCartItem} changeQty={changeCartItemQty}
             editCartItem={editCartItem} />} />
-        <Route path="/login" element={<Login user={user} setUser={setUser} />} />
-        <Route path="/logout" element={<Logout user={user} setUser={setUser} />} />
+        <Route path="/login" element={<Login user={user} setUser={setUser} mergeData={mergeData} />} />
+        <Route path="/logout" element={<Logout user={user} setUser={setUser} cleanCart={cleanCart} />} />
         <Route path="/not_implemented" element={<NotImp />} />
 
       </Routes>
