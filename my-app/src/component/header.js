@@ -22,7 +22,7 @@ export default function Heander({ itemNum, user, refresh }) {
                     {headerNotImpText.map((text, id) =>
                         (<Link key={id} to="/not_implemented">{text}</Link>))}
                     {!user && <Link to="/login">LOG IN</Link>}
-                    {user && <Link to="/logout"><img className='avatar' src={user.photoURL} /><>{user.displayName}</></Link>}
+                    {user && <Link to="/logout"><img className='avatar' src={user.photoURL} alt="userAvatar" /><>{user.displayName}</></Link>}
                 </div>
             </header>
         </>

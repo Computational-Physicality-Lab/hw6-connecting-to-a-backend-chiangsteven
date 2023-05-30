@@ -1,8 +1,5 @@
 import { Link, Navigate } from "react-router-dom";
-import {
-    getShirtName, getPrice, priceToNumber, getAllColors,
-    setSelectedImage, numberList, priceSign
-} from '../shared/utils';
+import { getPrice, priceToNumber, priceSign } from '../shared/utils';
 import CartShirtItem from "../component/cartShirtItem"
 import { useEffect } from "react";
 
@@ -21,15 +18,11 @@ function calculateTotal(myCart, shippingFee) {
 
 export default function Cart({ user, num, myCart, removeCartItem, changeQty, editCartItem, iniData }) {
     const shippingFee = 3.75;
-    useEffect(() => {
-        if (user) {
-            iniData();
-            // setTimeout(() => {
-            //     iniData();
-            // }, 1000);
-
-        }
-    }, []);
+    // useEffect(() => {
+    //     if (user) {
+    //         iniData();
+    //     }
+    // }, []);
     return (
         <>
             {!user && <Navigate to="/login" />}
@@ -39,6 +32,7 @@ export default function Cart({ user, num, myCart, removeCartItem, changeQty, edi
                     {
                         myCart.length === 0 ? <p id="cart-empty">Your Cart is Empty</p> :
                             myCart.map((shirt, idx) => (
+                                // shirt.id === -1?
                                 <CartShirtItem key={shirt.timeStamp} shirt={shirt} idx={idx}
                                     removeCartItem={removeCartItem} changeQty={changeQty}
                                     editCartItem={editCartItem} />

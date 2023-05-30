@@ -12,10 +12,9 @@ import _ from "lodash";
 import { CollectionName } from './shared/utils';
 import { useState, useEffect } from 'react';
 import { Routes, Route, HashRouter } from 'react-router-dom';
-import { createApi } from 'unsplash-js';
 import Login from './component/login';
 import Logout from './component/logout';
-import { doc, collection, setDoc, getDoc, updateDoc, arrayUnion, arrayRemove } from "firebase/firestore";
+import { doc, setDoc, getDoc, updateDoc, arrayUnion, arrayRemove } from "firebase/firestore";
 import FromPictures from './page/pictures';
 
 
@@ -23,8 +22,11 @@ function App() {
   const [itemNum, setItemNum] = useState(0);
   const [myCart, setMyCart] = useState([]);
   const [cartItemUid, setUid] = useState(0);
-  const [isLogin, setIsLogin] = useState(false);
   const [user, setUser] = useState(null);
+  const [onShirtImg, setOnShirtImg] = useState(null);
+  const [realData, setRealData] = useState();
+  const [page, setPage] = useState(1);
+  const [query, setQuery] = useState("");
   const addCart = async (id, size, quantity, color) => {
     const ts = _.now();
     if (user) {
@@ -39,6 +41,7 @@ function App() {
       setUid(cartItemUid + 1);
     }
   };
+
   const removeCartItem = async (id) => {
     if (user) {
       await updateDoc(doc(db, CollectionName, user.uid), {
@@ -57,16 +60,9 @@ function App() {
     if (user) {
       const originQty = myCart[id].quantity;
 
-
-      let tmpCart = JSON.parse(JSON.stringify(myCart));
+      const tmpCart = JSON.parse(JSON.stringify(myCart));
       tmpCart[id].quantity = qty;
 
-      // const docRef = doc(db, user.uid, myCart[id]);
-      // console.log("line 61")
-      // const docSnap = await getDoc(docRef);
-
-      // if (docSnap.exists()) {
-      // console.log("Document data:", docSnap.data());
       await updateDoc(doc(db, CollectionName, user.uid), {
         num: parseInt(itemNum) - parseInt(originQty) + parseInt(qty),
         content: arrayRemove(myCart[id])
@@ -74,18 +70,22 @@ function App() {
       await updateDoc(doc(db, CollectionName, user.uid), {
         content: arrayUnion(tmpCart[id])
       });
+
       setItemNum(parseInt(itemNum) - parseInt(originQty) + parseInt(qty));
       setMyCart(tmpCart);
-      // } else {
-      //   // docSnap.data() will be undefined in this case
-      //   console.log("No such document!");
-      // }
-
     }
   };
-  const editCartItem = (id, field, newValue) => {
-    let tmpCart = [...myCart];
+  const editCartItem = async (id, field, newValue) => {
+    const tmpCart = JSON.parse(JSON.stringify(myCart));
     tmpCart[id][field] = newValue;
+    if (user) {
+      await updateDoc(doc(db, CollectionName, user.uid), {
+        content: arrayRemove(myCart[id])
+      });
+      await updateDoc(doc(db, CollectionName, user.uid), {
+        content: arrayUnion(tmpCart[id])
+      });
+    }
     setMyCart(tmpCart);
   };
   async function fetchData(user) {
@@ -124,15 +124,8 @@ function App() {
       setMyCart([]);
     }
   }
-  // useEffect(() => {
-  //   db.collection("anchors").get().then(querySnapshot => {
-  //     console.log(querySnapshot.docs.map(doc => doc.data()));
-  //   })
 
-
-  // });
   useEffect(() => {
-
     if (user) {
       iniData();
     }
@@ -151,13 +144,16 @@ function App() {
 
         <Route path="/" element={<Home />} />
         <Route path="/products" element={<Products />} />
-        <Route path="/from_pictures" element={<FromPictures user={user} />} />
+        <Route path="/from_pictures" element={<FromPictures addCart={addCart} user={user}
+          onShirtImg={onShirtImg} setOnShirtImg={setOnShirtImg} page={page} setPage={setPage}
+          realData={realData} setRealData={setRealData} query={query} setQuery={setQuery} />} />
         <Route path="/details/:productID" element={<Details addCart={addCart} user={user} />} />
         <Route path="/shoppingcart"
           element={<Cart user={user} num={itemNum} myCart={myCart} iniData={iniData}
-            removeCartItem={removeCartItem} changeQty={changeCartItemQty} editCartItem={editCartItem} />} />
-        <Route path="/login" element={<Login user={user} setIsLogin={setIsLogin} setUser={setUser} />} />
-        <Route path="/logout" element={<Logout user={user} setIsLogin={setIsLogin} setUser={setUser} />} />
+            removeCartItem={removeCartItem} changeQty={changeCartItemQty}
+            editCartItem={editCartItem} />} />
+        <Route path="/login" element={<Login user={user} setUser={setUser} />} />
+        <Route path="/logout" element={<Logout user={user} setUser={setUser} />} />
         <Route path="/not_implemented" element={<NotImp />} />
 
       </Routes>

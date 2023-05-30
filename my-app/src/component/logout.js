@@ -9,10 +9,9 @@ import "firebase/compat/firestore";
 // const auth = firebase.auth.getAuth();
 
 
-function Logout({ user, setIsLogin, setUser }) {
+function Logout({ user, setUser }) {
     const logoutClick = () => {
         firebase.auth().signOut().then(() => {
-            setIsLogin(false);
             setUser(null);
         });
     }

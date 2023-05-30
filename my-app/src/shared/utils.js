@@ -1,6 +1,7 @@
 import shirts from './shirts';
 import defaultFrontShirt from "../assets/shirt_images/default-m-front.png";
 import defaultBackShirt from "../assets/shirt_images/default-m-back.png";
+import baseShirt from "../assets/images/shirt-base.png"
 
 const noPriceString = "No price info";
 
@@ -12,6 +13,8 @@ function getShirtName(idx) {
 }
 
 function getPrice(idx) {
+    if (idx === -1)
+        return "$20.00";
     let price = shirts[idx].price;
     if (price === undefined)
         price = noPriceString;
@@ -72,6 +75,12 @@ function setSelectedImage(idx, color_detail, side_detail) {
 
 }
 
+function setCustomShirtImage(imgUrl) {
+    return (<div className='detail-pic'><img src={baseShirt} className="shirt-pic" alt="shirt" />
+        {imgUrl ? <img src={imgUrl} className="on-shirt-pic" alt="pic-on-shirt" /> : null}
+    </div>)
+}
+
 const numberList = [];
 for (let i = 1; i <= 20; i++) {
     numberList.push(i);
@@ -89,5 +98,6 @@ function priceToNumber(price) {
 export {
     noPriceString, priceSign, numberList, CollectionName,
     priceToNumber, getShirtName, getPrice, getDescription, getAllColors,
-    getFirstAvailableColorAndNum, getFirstShirtImages, setSelectedImage
+    getFirstAvailableColorAndNum, getFirstShirtImages, setSelectedImage,
+    setCustomShirtImage
 };

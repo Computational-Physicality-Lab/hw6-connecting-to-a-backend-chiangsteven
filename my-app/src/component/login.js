@@ -1,17 +1,11 @@
 import { Navigate } from "react-router-dom";
 import { Button } from 'reactstrap';
 import firebase from "firebase/compat/app";
-import { getAuth } from "firebase/auth";
 import "firebase/compat/auth";
 import "firebase/compat/firestore";
 import googleLogo from "../assets/images/google-logo.png"
 
-// import { getAuth, signInWithPopup, GoogleAuthProvider } from "firebase/compat/auth";
-
-// const auth = firebase.auth.getAuth();
-
-
-function Login({ user, setIsLogin, setUser }) {
+function Login({ user, setUser }) {
     const loginClick = () => {
         const providerGoogle = new firebase.auth.GoogleAuthProvider();
         providerGoogle.addScope('profile');
@@ -23,7 +17,6 @@ function Login({ user, setIsLogin, setUser }) {
                 const user = result.user;
                 console.log(token);
                 console.log(user);
-                setIsLogin(true);
                 setUser(user);
             })
             .catch(function (error) {
@@ -35,7 +28,7 @@ function Login({ user, setIsLogin, setUser }) {
         <>
             {user && <Navigate to="/" />}
             {!user && <div className="button-page"><Button outline onClick={loginClick}>
-                <img src={googleLogo} />Login with Google</Button></div>}
+                <img src={googleLogo} alt="googleLogo" />Login with Google</Button></div>}
         </>
     );
 }
