@@ -8,15 +8,15 @@ import SizeOptions from '../component/sizeOptions'
 import { numberList } from '../shared/utils';
 import { useEffect, useState } from 'react';
 import { Link } from "react-router-dom";
-import ScrollToBottom from 'react-scroll-to-bottom';
 import SearchApi from "../api/unsplashApi"
 
 export default function FromPictures({ addCart, user, onShirtImg, setOnShirtImg, query, setQuery, page, setPage, realData, setRealData }) {
     const [size, setSize] = useState("");
     const [qty, setQty] = useState("1");
+    const [canGetMore, setCanGetMore] = useState(true);
     const defaultScottys = [Scotty1, Scotty2, Scotty3, Scotty4, Scotty5];
     const onClick = (e) => {
-        console.log(e.currentTarget.children[0].src);
+        // console.log(e.currentTarget.children[0].src);
         setOnShirtImg(e.currentTarget.children[0].src);
     }
     const searchImgs = async () => {
@@ -24,12 +24,33 @@ export default function FromPictures({ addCart, user, onShirtImg, setOnShirtImg,
         console.log(searchTerm);
         setQuery(searchTerm);
         setPage(1);
-        const Data = await SearchApi(searchTerm);
-        setRealData(Data);
+        const Data = await SearchApi(searchTerm, 1);
+        if (Data.total_pages === 1) {
+            setCanGetMore(false);
+        }
+        else {
+            setCanGetMore(true);
+        }
+        setRealData(Data.results);
     }
+    const getMoreImgs = async () => {
+        const Data = await SearchApi(query, page + 1);
+        if (Data.total_pages <= page + 1) {
+            setCanGetMore(false);
+        }
+        else {
+            setCanGetMore(true);
+        }
+        const oriData = JSON.parse(JSON.stringify(realData));
 
+        setRealData([...oriData, ...Data.results]);
+        setPage(page + 1);
+    }
     useEffect(() => {
         console.log(realData);
+        console.log(realData?.length);
+        const elem = document.getElementById("search-result");
+        elem.scrollTop = elem.scrollHeight;
     }, [realData]);
     return (
         <div className="create-from-pic-container">
@@ -78,11 +99,11 @@ export default function FromPictures({ addCart, user, onShirtImg, setOnShirtImg,
                     <input id="search-bar" type="search" defaultValue={query} />
                     <button onClick={searchImgs}>Search</button>
                 </div>
-                {realData ? null : <div id="no-search-results">No results. Maybe use a Scotty?</div>}
-                <div className="search-result">
-                    {realData ?
-                        realData.results.map(data =>
-                            <div key={data.id} className="search-img-container" onClick={onClick}>
+                {realData && realData.length !== 0 ? null : <div id="no-search-results">No results. Maybe use a Scotty?</div>}
+                <div id="search-result" className="search-result">
+                    {realData && realData.length !== 0 ?
+                        realData.map((data, idx) =>
+                            <div key={data.id + idx} className="search-img-container" onClick={onClick}>
                                 <img src={data.urls.small} className="search-pic" alt="default-scotty" />
                             </div>) :
                         defaultScottys.map(scotty =>
@@ -90,6 +111,16 @@ export default function FromPictures({ addCart, user, onShirtImg, setOnShirtImg,
                                 <img src={scotty} className="search-pic" alt="default-scotty" />
                             </div>)}
                 </div>
+                {realData && realData?.length !== 0 ?
+                    <div className="flex-center">
+                        <button type="button"
+                            className="display-btn add-cart-btn"
+                            disabled={!canGetMore}
+                            onClick={getMoreImgs} >
+                            Display more
+                        </button>
+                    </div> : null}
+
             </div>
         </div>
     )

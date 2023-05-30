@@ -340,6 +340,8 @@ footer>div {
     text-align: center;
 }
 
+
+
 .add-cart-btn,
 .cart-remove-btn {
     cursor: pointer;
@@ -353,6 +355,10 @@ footer>div {
     padding: 1px 6px 1px 6px;
     font-size: larger;
     max-width: 115px;
+}
+
+.display-btn {
+    max-width: 150px;
 }
 
 .side-btn:hover,
