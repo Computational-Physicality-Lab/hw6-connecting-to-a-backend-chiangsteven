@@ -30,23 +30,36 @@ function App() {
   const addCart = async (id, size, quantity, color) => {
     const ts = _.now();
     if (user) {
+      const [num, content] = await fetchData(user);
       await updateDoc(doc(db, CollectionName, user.uid), {
-        num: parseInt(itemNum) + parseInt(quantity),
+        num: parseInt(num) + parseInt(quantity),
         content: arrayUnion({ id: id, size: size, quantity: quantity, color: color, cartId: cartItemUid, timeStamp: ts })
       });
+      const [newNum, newContent] = await fetchData(user);
+      setItemNum(calculateItemNum(newContent));
+      const sortedContent = _.sortBy([...JSON.parse(JSON.stringify(newContent))],
+        (c) => { return -c.timeStamp });
+      setMyCart(sortedContent);
     }
-    setItemNum(parseInt(itemNum) + parseInt(quantity));
-    setMyCart([{ id: id, size: size, quantity: quantity, color: color, cartId: cartItemUid, timeStamp: ts }, ...JSON.parse(JSON.stringify(myCart))]);
+    else {
+      setItemNum(parseInt(itemNum) + parseInt(quantity));
+      setMyCart([{ id: id, size: size, quantity: quantity, color: color, cartId: cartItemUid, timeStamp: ts }, ...JSON.parse(JSON.stringify(myCart))]);
+    }
     setUid(cartItemUid + 1);
-
   };
 
   const removeCartItem = async (id) => {
     if (user) {
+      const [num, content] = await fetchData(user);
       await updateDoc(doc(db, CollectionName, user.uid), {
-        num: parseInt(itemNum) - parseInt(myCart[id].quantity),
+        num: parseInt(num) - parseInt(myCart[id].quantity),
         content: arrayRemove(myCart[id])
       });
+      const [newNum, newContent] = await fetchData(user);
+      setItemNum(calculateItemNum(newContent));
+      const sortedContent = _.sortBy([...JSON.parse(JSON.stringify(newContent))],
+        (c) => { return -c.timeStamp });
+      setMyCart(sortedContent);
     }
     setItemNum(parseInt(itemNum) - parseInt(myCart[id].quantity));
     let tmpCart = JSON.parse(JSON.stringify(myCart));
@@ -54,27 +67,34 @@ function App() {
     // console.log(tmpCart);
     // console.log(myCart);
     setMyCart(tmpCart);
-
   };
+
   const changeCartItemQty = async (id, qty) => {
     const originQty = myCart[id].quantity;
     const tmpCart = JSON.parse(JSON.stringify(myCart));
     tmpCart[id].quantity = qty;
 
     if (user) {
+      const [num, content] = await fetchData(user);
       await updateDoc(doc(db, CollectionName, user.uid), {
-        num: parseInt(itemNum) - parseInt(originQty) + parseInt(qty),
+        num: parseInt(num) - parseInt(originQty) + parseInt(qty),
         content: arrayRemove(myCart[id])
       });
       await updateDoc(doc(db, CollectionName, user.uid), {
         content: arrayUnion(tmpCart[id])
       });
+      const [newNum, newContent] = await fetchData(user);
+      setItemNum(calculateItemNum(newContent));
+      const sortedContent = _.sortBy([...JSON.parse(JSON.stringify(newContent))],
+        (c) => { return -c.timeStamp });
+      setMyCart(sortedContent);
     }
-
-    setItemNum(parseInt(itemNum) - parseInt(originQty) + parseInt(qty));
-    setMyCart(tmpCart);
-
+    else {
+      setItemNum(parseInt(itemNum) - parseInt(originQty) + parseInt(qty));
+      setMyCart(tmpCart);
+    }
   };
+
   const editCartItem = async (id, field, newValue) => {
     const tmpCart = JSON.parse(JSON.stringify(myCart));
     tmpCart[id][field] = newValue;
@@ -85,13 +105,31 @@ function App() {
       await updateDoc(doc(db, CollectionName, user.uid), {
         content: arrayUnion(tmpCart[id])
       });
+      const [newNum, newContent] = await fetchData(user);
+      setItemNum(calculateItemNum(newContent));
+      const sortedContent = _.sortBy([...JSON.parse(JSON.stringify(newContent))],
+        (c) => { return -c.timeStamp });
+      setMyCart(sortedContent);
     }
-    setMyCart(tmpCart);
+    else
+      setMyCart(tmpCart);
   };
 
   const cleanCart = () => {
     setItemNum(0);
     setMyCart([]);
+  }
+
+  function calculateItemNum(remoteContent) {
+    if (remoteContent) {
+      let num = 0;
+      remoteContent.forEach(item => {
+        num += parseInt(item.quantity);
+      }
+      );
+      return num;
+    }
+    return 0;
   }
 
   async function fetchData(user) {
@@ -112,28 +150,33 @@ function App() {
         num: 0,
         content: []
       });
-      return [undefined, undefined];
+      return [0, []];
     }
-
-
-
   }
+
   const iniData = async () => {
     const [num, content] = await fetchData(user);
-    setItemNum(num === undefined ? 0 : num);
+    if (user) {
+      setItemNum(calculateItemNum(content));
 
-    if (content) {
-      const sortedContent = _.sortBy(content, (c) => { return -c.timeStamp });
-      setMyCart(sortedContent);
+      if (content) {
+        const sortedContent = _.sortBy(content, (c) => { return -c.timeStamp });
+        setMyCart(sortedContent);
+      }
     }
   }
 
   const mergeData = async (myuser) => {
     const [num, content] = await fetchData(myuser);
 
-    await updateDoc(doc(db, CollectionName, myuser.uid), {
-      num: (num ? num : 0) + itemNum
-    });
+    if (num !== undefined && num >= 0)
+      await updateDoc(doc(db, CollectionName, myuser.uid), {
+        num: parseInt(num) + itemNum
+      });
+    else
+      await updateDoc(doc(db, CollectionName, myuser.uid), {
+        num: itemNum
+      });
 
     for (let i = 0; i < myCart.length; i++) {
       await updateDoc(doc(db, CollectionName, myuser.uid), {
@@ -142,7 +185,7 @@ function App() {
     }
 
     const [newNum, newContent] = await fetchData(myuser);
-    setItemNum(newNum);
+    setItemNum(calculateItemNum(newContent));
     const sortedContent = _.sortBy(newContent, (c) => { return -c.timeStamp });
     setMyCart(sortedContent);
   }

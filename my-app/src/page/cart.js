@@ -1,6 +1,7 @@
 import { Link } from "react-router-dom";
 import { getPrice, priceToNumber, priceSign } from '../shared/utils';
 import CartShirtItem from "../component/cartShirtItem"
+import { useEffect } from "react";
 
 function calculateMyCart(myCart) {
     let total = 0;
@@ -17,6 +18,9 @@ function calculateTotal(myCart, shippingFee) {
 
 export default function Cart({ user, num, myCart, removeCartItem, changeQty, editCartItem, iniData }) {
     const shippingFee = 3.75;
+    useEffect(() => {
+        iniData();
+    }, []);
     return (
         <>
             <h2 id="cart-name">My Cart ({num})</h2>
